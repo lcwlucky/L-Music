@@ -1,7 +1,7 @@
 # L-Music
-![avatar](/static/1.png)
-![avatar](/static/2.png)
-![avatar](/static/3.png)
-![avatar](/static/4.png)
-![avatar](/static/5.png)
-<img src="./static/1.png" width="200" align=center />
+<img src="./static/1.png" width="230" align=center />
+<img src="./static/2.png" width="230" align=center />
+<img src="./static/3.png" width="230" align=center />
+<img src="./static/4.png" width="230" align=center />
+<img src="./static/5.png" width="230" align=center />
+<img src="./static/6.png" width="230" align=center />

@@ -1,3 +1,6 @@
 # L-Music
-Vue实现web音乐播放器
 ![avatar](/static/1.png)
+![avatar](/static/2.png)
+![avatar](/static/3.png)
+![avatar](/static/4.png)
+![avatar](/static/5.png)

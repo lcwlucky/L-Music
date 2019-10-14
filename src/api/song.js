@@ -5,9 +5,8 @@ import axios from 'axios'
 const debug = process.env.NODE_ENV !== 'production'
 
 export function getLyric(mid) { //获取歌词
-  const url = debug ? '/api/getLyric' : 'http://ustbhuangyi.com/music/api/lyric'
+  const url = debug ? '/api/getLyric' : '/getLyric'
   // const url = 'http://ustbhuangyi.com/music/api/lyric'
-  // const url = '/api/getLyric'
 
   const data = Object.assign({}, commonParams, {
     songmid: mid,
@@ -29,7 +28,7 @@ export function getLyric(mid) { //获取歌词
 //获取歌曲播放地址
 export function getSongsUrl(songs) {
   // const url = '/api/getSongUrl'
-  const url = debug ? '/api/getSongUrl' : 'http://ustbhuangyi.com/music/api/getPurlUrl'
+  const url = debug ? '/api/getSongUrl' : '/getSongUrl'
   let mids = []
   let types = []
 

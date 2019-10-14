@@ -147,7 +147,7 @@
       },
       scrollY(newY) {
         const listHeight = this.listHeight
-        // 当滚动到顶部，newY>0
+        // 当滚动到顶部，newY >0
         if (newY > 0) {
           this.currentIndex = 0
           return

@@ -62,8 +62,8 @@
       },
       //向外派发用户操作后的进度改变，以便让歌曲更新到相应的进度
       _triggerPercent() {
-        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
-        const percent = this.$refs.progress.clientWidth / barWidth
+        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth //总长
+        const percent = this.$refs.progress.clientWidth / barWidth //当前进度比例
         this.$emit('percentChange', percent)
       },
       _offset(offsetWidth) {

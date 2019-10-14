@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const debug = process.env.NODE_ENV !== 'production'
 
-export function getRecommend() {
+export function getRecommend () {
   //qq音乐推荐轮播图的接口
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
   //请求参数对象
@@ -16,9 +16,10 @@ export function getRecommend() {
 
   return jsonp(url, data, options)  //自己封装的jsonp()返回的是promise，所以这里返回的也是promise
 }
-export function getDiscList() {
+
+export function getDiscList () {
   //qq音乐此接口设置了后端的host和refer，jsonp也不能访问,我们利用服务器反向代理伪造host和referer解决
-  const url = debug ? '/api/getDiscList' : 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+  const url = debug ? '/api/getDiscList' : '/getDiscList'
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
     hostUin: 0,
@@ -30,19 +31,8 @@ export function getDiscList() {
     rnd: Math.random(),
     format: 'json'
   })
-  if(debug){ //如果是开发环境
-    return axios.get(url, {
-      params: data
-    }).then((res) => {
-      return Promise.resolve(res.data)
-    })
-  }
 
   return axios.get(url, {
-    headers:{
-      referer: 'https://c.y.qq.com/',
-      host: 'c.y.qq.com'
-    },
     params: data
   }).then((res) => {
     return Promise.resolve(res.data)
@@ -51,9 +41,8 @@ export function getDiscList() {
 }
 
 //获取歌单歌曲列表
-export function getSongList(disstid) {
-  // const url = '/api/getCdInfo'
-  const url = debug ? '/api/getCdInfo' : 'http://ustbhuangyi.com/music/api/getCdInfo'
+export function getSongList (disstid) {
+  const url = debug ? '/api/getCdInfo' : '/getCdInfo'
   const data = Object.assign({}, commonParams, {
     disstid,
     type: 1,

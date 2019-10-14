@@ -31,7 +31,7 @@ export default {
     commit(types.SET_SEQUENCE_LIST,list)//音乐顺序列表
     let randomList = shuffle(list)
     commit(types.SET_PLAYLIST,randomList)//音乐播放列表
-    commit(types.SET_CURRENT_INDEX,0)//音乐列表
+    commit(types.SET_CURRENT_INDEX,0)//当前音乐播放下标
     commit(types.SET_FULL_SCREEN,true) //全屏标志
     commit(types.SET_PLAYING_STATE,true) //播放状态
   },

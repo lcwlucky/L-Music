@@ -41,7 +41,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {mapActions,mapGetters,mapMutations} from 'vuex'
+  import  {mapActions,mapGetters,mapMutations} from 'vuex'
   import {playMode} from '../../common/js/config'
   import Scroll from '../../base/scroll/scroll'
   import Confirm from '../../base/confirm/confirm'

@@ -71,7 +71,7 @@
               <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon-not-favorite"></i>
+              <i class="icon" @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -115,6 +115,8 @@
   import Lyric from 'lyric-parser' //解析歌词的第三方库
   import Scroll from '../../base/scroll/scroll'
   import PlayList from '../../components/playlist/playlist'
+
+  import {playerMixin} from '../../common/js/mixin'
 
   const transform = prefixStyle('transform')
   const transitionDuration = prefixStyle('transitionDuration')
@@ -227,6 +229,25 @@
         if(this.currentLyric) {
           this.currentLyric.seek(0) //歌词要重新开始
         }
+      },
+      toggleFavorite(song) {
+        if (this.isFavorite(song)) {
+          this.deleteFavoriteList(song)
+        } else {
+          this.saveFavoriteList(song)
+        }
+      },
+      getFavoriteIcon(song) {
+        if (this.isFavorite(song)) {
+          return 'icon-favorite'
+        }
+        return 'icon-not-favorite'
+      },
+      isFavorite(song) {
+        const index = this.favoriteList.findIndex((item) => {
+          return item.id === song.id
+        })
+        return index > -1
       },
       //用户操作进度条变化的监听
       onProgressBarChangeByUser (percent) {
@@ -432,7 +453,9 @@
         setPlayList: 'SET_PLAYLIST',
       }),
       ...mapActions([
-        'savePlayHistory'
+        'savePlayHistory',
+        'deleteFavoriteList',
+        'saveFavoriteList'
       ])
     },
     computed: {
@@ -460,7 +483,7 @@
         return 'icon-sequence'
         // return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.random ? 'icon-random' : 'icon-loop'
       },
-      ...mapGetters(['fullScreen', 'playList', 'currentSong', 'playing', 'currentIndex', 'mode', 'sequenceList']),
+      ...mapGetters(['fullScreen', 'playList', 'currentSong', 'playing', 'currentIndex', 'mode', 'sequenceList','favoriteList']),
     },
     watch: {
       //监视播放状态的变化让audio暂停或停止

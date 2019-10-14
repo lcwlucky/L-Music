@@ -2,17 +2,17 @@
 <template>
   <div class="recommend" ref="recommend">
     <scroll ref="scroll" class="recommend-content" :data="discList">
-      <!--scroll组件中只能有一个子元素-->
       <div>
         <div v-if="recommends.length" class="slider-wrapper" ref="sliderWrapper">
-          <slider>
-            <div v-for="item in recommends">
-              <a :href="item.linkUrl">
-                <!--class="needsclick" fastclick提供的防止与其他click冲突的解决-->
-                <img class="needsclick" :src="item.picUrl" @load="loadImage">
-              </a>
-            </div>
-          </slider>
+              <Carousel :datas="recommends" :delay="delay" @loadFinish="loadFinish"/>
+<!--          <slider>-->
+<!--            <div v-for="item in recommends">-->
+<!--              <a :href="item.linkUrl">-->
+<!--                &lt;!&ndash;class="needsclick" fastclick提供的防止与其他click冲突的解决&ndash;&gt;-->
+<!--                <img class="needsclick" :src="item.picUrl" @load="loadImage">-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </slider>-->
         </div>
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
@@ -45,13 +45,15 @@
   import Loading from '../../base/loading/loading'
   import {playlistMixin} from '../../common/js/mixin'
   import {mapMutations} from 'vuex'
+  import Carousel from '../../base/carousel/carousel'
 
   export default {
     mixins:[playlistMixin],
     data() {
       return {
         recommends: [],
-        discList: []
+        discList: [],
+        delay:3000
       }
     },
     created() {
@@ -73,14 +75,11 @@
           }
         })
       },
-      //图片加载成功的回调
-      loadImage() {
-        if (!this.checkloaded) {//设置一个标志位，只要有一张轮播图图片成功回调后就可以获取高度了，防止重复无意义的执行
-          this.checkloaded = true
-          //刷新sroll，重新渲染高度，这样做的目的的防止底部歌单列表先渲染于轮播图组件列表，这样scroll组件就没有轮播图组件的高度了
-          //这样之后轮播图组件渲染出来占用一部分scroll组件的高度后，底部歌单列表滑不到底部
-          this.$refs.scroll.refresh()
-        }
+      //轮播图图片加载成功的回调
+      loadFinish() {
+        //刷新sroll，重新渲染高度，这样做的目的的防止底部歌单列表先渲染于轮播图组件列表，这样scroll组件就没有轮播图组件的高度了
+        //这样之后轮播图组件渲染出来占用一部分scroll组件的高度后，底部歌单列表滑不到底部
+        this.$refs.scroll.refresh()
       },
       selectItem(item) {
         this.$router.push({path:`/recommend/${item.dissid}`})
@@ -101,7 +100,8 @@
     components: {
       Slider,
       Loading,
-      Scroll
+      Scroll,
+      Carousel
     }
   }
 </script>

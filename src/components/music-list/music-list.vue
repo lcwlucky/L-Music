@@ -71,11 +71,7 @@
     computed: {
       bgStyle() {
         return `background-image:url(${this.bgImage})`
-      },
-    },
-    created() {
-      this.probeType = 3
-      this.listenScroll = true
+      }
     },
     mounted() {
       //缓存顶部歌手图片高度。不用每次都进行dom操作
@@ -228,6 +224,7 @@
         background: rgba(7, 17, 27, 0.4)
     .bg-layer
       position: relative
+      border-radius 10px
       height: 100%
       background: $color-background
     .list

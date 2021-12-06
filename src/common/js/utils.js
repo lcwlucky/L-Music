@@ -1,11 +1,11 @@
-/*工具类*/
+/* 工具类 */
 
-//返回min到max之间随机的整数 Math.random() 返回0-1，不包括1
+// 返回min到max之间随机的整数 Math.random() 返回0-1，不包括1
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-//打乱数组
+// 打乱数组
 export function shuffle(arr) {
   let _arr = arr.slice();
   for (let i = 0; i < _arr.length; i++) {
@@ -17,7 +17,7 @@ export function shuffle(arr) {
   return _arr;
 }
 
-//函数防抖
+// 函数防抖
 export function debounce(func, delay) {
   let timer;
 
@@ -38,7 +38,7 @@ export function saveStorage(key, name) {
   });
 
   if (index >= 0) {
-    //如果之前有了这个记录
+    // 如果之前有了这个记录
     console.log('有这个记录');
     arr.splice(index, 1);
     arr.unshift(name);

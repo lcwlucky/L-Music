@@ -13,7 +13,7 @@ module.exports = {
       '/api/getDiscList': {
         target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
         bypass: function (req, res, proxyOptions) {
-          //利用服务器反向代理伪造host和referer解决,也可以在webpack.dev.conf.js文件中用axios转发来进行referer伪造
+          // 利用服务器反向代理伪造host和referer解决,也可以在webpack.dev.conf.js文件中用axios转发来进行referer伪造
           req.headers.referer = 'https://c.y.qq.com/';
           req.headers.host = 'c.y.qq.com';
         },
@@ -23,7 +23,7 @@ module.exports = {
         },
       },
       '/api/getSongUrl': {
-        //获取歌曲url
+        // 获取歌曲url
         target: 'http://ustbhuangyi.com/music/api/getPurlUrl',
         changeOrigin: true, // 支持跨域
         pathRewrite: {
@@ -32,7 +32,7 @@ module.exports = {
         },
       },
       '/api/getLyric': {
-        //获取歌词
+        // 获取歌词
         target: 'http://ustbhuangyi.com/music/api/lyric',
         changeOrigin: true, // 支持跨域
         pathRewrite: {
@@ -41,7 +41,7 @@ module.exports = {
         },
       },
       '/api/getCdInfo': {
-        //获取歌单歌曲列表
+        // 获取歌单歌曲列表
         target: 'http://ustbhuangyi.com/music/api/getCdInfo',
         changeOrigin: true, // 支持跨域
         pathRewrite: {
@@ -50,7 +50,7 @@ module.exports = {
         },
       },
       '/api/search': {
-        //搜索
+        // 搜索
         target: 'http://ustbhuangyi.com/music/api/search',
         changeOrigin: true, // 支持跨域
         pathRewrite: {

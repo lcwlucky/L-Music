@@ -1,7 +1,7 @@
 import { commonParams, options } from './config';
 import jsonp from '../common/js/jsonp';
 
-/*获取排行榜列表*/
+/* 获取排行榜列表 */
 export function getRankList() {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg';
   let data = Object.assign({}, commonParams, {
@@ -12,7 +12,7 @@ export function getRankList() {
   return jsonp(url, data, options);
 }
 
-/*获取某个排行榜下的歌曲列表*/
+/* 获取某个排行榜下的歌曲列表 */
 export function getMusicList(topid) {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg';
   const data = Object.assign({}, commonParams, {

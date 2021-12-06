@@ -2,9 +2,9 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { playMode } from './config';
 import { shuffle } from './utils';
 
-/*vue组件混入*/
+/* vue组件混入 */
 
-/*解决播放时底部小播放器占用一部分scroll组件的高度导致scroll组件滑不到底部*/
+/* 解决播放时底部小播放器占用一部分scroll组件的高度导致scroll组件滑不到底部 */
 export const playlistMixin = {
   computed: {
     ...mapGetters(['playList']),
@@ -45,7 +45,7 @@ export const playerMixin = {
     ]),
   },
   methods: {
-    //改变播放模式
+    // 改变播放模式
     changeMode() {
       const mode = (this.mode + 1) % 3;
       this.setPlayMode(mode);

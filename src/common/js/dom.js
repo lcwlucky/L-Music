@@ -1,10 +1,10 @@
-//操作dom相关的方法
+// 操作dom相关的方法
 
 export function hasClass(el, className) {
   let reg = new RegExp('(^|\\s)' + className + '(\\s|$)');
   return reg.test(el.className);
 }
-//向一个dom节点添加一个类名
+// 向一个dom节点添加一个类名
 export function addClass(el, className) {
   if (hasClass(el, className)) {
     return;
@@ -14,7 +14,7 @@ export function addClass(el, className) {
   newClass.push(className);
   el.className = newClass.join(' ');
 }
-//获取或者设置dom元素属性
+// 获取或者设置dom元素属性
 export function getData(el, name, val) {
   const prefix = 'data-';
   if (val) {
@@ -30,7 +30,7 @@ let vendor = (() => {
     Moz: 'MozTransform',
     O: 'OTransform',
     ms: 'msTransform',
-    standard: 'transform',
+    standard: 'transform'
   };
   for (let key in transformNames) {
     if (elementStyle[transformNames[key]] !== undefined) {
@@ -40,7 +40,7 @@ let vendor = (() => {
   return false;
 })();
 
-//获取浏览器拥有的特定前缀的属性名  比如webkitTransfrom
+// 获取浏览器拥有的特定前缀的属性名  比如webkitTransfrom
 export function prefixStyle(style) {
   if (vendor === false) {
     return false;

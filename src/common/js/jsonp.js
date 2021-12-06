@@ -1,5 +1,5 @@
 import originJsonp from 'jsonp';
-//自定义jsonp函数（利用安装的jsonp包）
+// 自定义jsonp函数（利用安装的jsonp包）
 export default function jsonp(url, data, option) {
   url += (url.indexOf('?') < 0 ? '?' : '&') + param(data);
 

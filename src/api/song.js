@@ -5,7 +5,7 @@ import axios from 'axios';
 const debug = process.env.NODE_ENV !== 'production';
 
 export function getLyric(mid) {
-  //获取歌词
+  // 获取歌词
   const url = debug ? '/api/getLyric' : '/getLyric';
   // const url = 'http://ustbhuangyi.com/music/api/lyric'
 
@@ -28,7 +28,7 @@ export function getLyric(mid) {
     });
 }
 
-//获取歌曲播放地址
+// 获取歌曲播放地址
 export function getSongsUrl(songs) {
   // const url = '/api/getSongUrl'
   const url = debug ? '/api/getSongUrl' : '/getSongUrl';

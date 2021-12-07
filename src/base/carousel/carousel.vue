@@ -16,7 +16,7 @@
       >
         <a :href="item.linkUrl">
           <img
-            :src="item.picUrl"
+            :src="item.imageUrl"
             alt=""
             ref="imgNodes"
             class="needsclick"

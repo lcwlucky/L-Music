@@ -2,10 +2,11 @@ import originJsonp from 'jsonp';
 // 自定义jsonp函数（利用安装的jsonp包）
 export default function jsonp(url, data, option) {
   url += (url.indexOf('?') < 0 ? '?' : '&') + param(data);
-
+  console.log('daozhele', url)
   return new Promise((resolve, reject) => {
     originJsonp(url, option, (err, data) => {
       if (!err) {
+        console.log('data---', data)
         resolve(data);
       } else {
         reject(err);
@@ -20,5 +21,5 @@ export function param(data) {
     let value = data[k] !== undefined ? data[k] : '';
     url += '&' + k + '=' + encodeURIComponent(value);
   }
-  return url ? url.substring(1) : ''; //去除第一个&符
+  return url ? url.substring(1) : ''; // 去除第一个&符
 }

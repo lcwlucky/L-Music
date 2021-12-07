@@ -9,11 +9,17 @@
     :listen-scroll="listenScroll"
   >
     <ul>
-      <li v-for="group in data" class="list-group" ref="listGroup">
+      <li
+        v-for="(group, i) in data"
+        :key="i"
+        class="list-group"
+        ref="listGroup"
+      >
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
           <li
-            v-for="item in group.items"
+            v-for="(item, i) in group.items"
+            :key="i"
             class="list-group-item"
             @click="selectItem(item)"
           >
@@ -33,6 +39,7 @@
         <li
           v-for="(item, index) in shortcutList"
           :data-index="index"
+          :key="index"
           class="item"
           :class="{ current: currentIndex === index }"
         >
@@ -64,7 +71,7 @@ export default {
     }
   },
   computed: {
-    shortcutList() {//获取分类名称  热 A B - Z
+    shortcutList() {// 获取分类名称  热 A B - Z
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
@@ -90,12 +97,12 @@ export default {
     this.listHeight = []
   },
   methods: {
-    //派发歌手item的点击事件
+    // 派发歌手item的点击事件
     selectItem(item) {
       this.$emit('select', item)
     },
     onShortcutTouchStart(e) {
-      //anchorIndex:要去的锚点位置的下标
+      // anchorIndex:要去的锚点位置的下标
       let anchorIndex = getData(e.target, 'index')
       let firstTouch = e.touches[0]
       // this.touch.y1 = firstTouch.pageY
@@ -107,7 +114,7 @@ export default {
       let firstTouch = e.touches[0]
       // this.touch.y2 = firstTouch.pageY
       this.touch.y2 = firstTouch.clientY
-      //得到滚动了几个item  或0代表向下取整
+      // 得到滚动了几个item  或0代表向下取整
       let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
       let anchorIndex = parseInt(this.touch.anchorIndex) + delta
       this._scrollTo(anchorIndex)
@@ -115,11 +122,11 @@ export default {
     refresh() {
       this.$refs.listview.refresh()
     },
-    //监听scroll组件派发的滚动事件
+    // 监听scroll组件派发的滚动事件
     _scroll(pos) {
       this.scrollY = pos.y
     },
-    //计算每个歌手列表的所在位置
+    // 计算每个歌手列表的所在位置
     _calculateHeight() {
       this.listHeight = []
       const list = this.$refs.listGroup
@@ -132,12 +139,12 @@ export default {
       }
     },
     _scrollTo(index) {
-      //当点击导航上下两部分的padding的时候，index是没有的
+      // 当点击导航上下两部分的padding的时候，index是没有的
       clearTimeout(this.timer)
       if (!index && index !== 0) {
         return
       }
-      //滑动超出控制
+      // 滑动超出控制
       if (index < 0) {
         index = 0
       } else if (index > this.$refs.listGroup.length - 1) {
@@ -145,7 +152,7 @@ export default {
       }
       this.$refs.show.style.opacity = 1
       // this.scrollY = -this.listHeight[index]
-      //scrollToElement(el, time, offsetX, offsetY, easing) 作用：滚动到指定的目标元素。
+      // scrollToElement(el, time, offsetX, offsetY, easing) 作用：滚动到指定的目标元素。
       this.currentIndex = index
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
       this.timer = setTimeout( () => {

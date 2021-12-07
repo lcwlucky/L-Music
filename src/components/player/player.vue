@@ -10,14 +10,18 @@
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.image" />
+          <img
+            width="100%"
+            height="100%"
+            :src="currentSong.al && currentSong.al.picUrl"
+          />
         </div>
         <div class="top">
           <div class="back" @click="miniOrNormal(1)">
             <i class="icon-back"></i>
           </div>
           <h1 class="title" v-html="currentSong.name"></h1>
-          <h2 class="subtitle" v-html="currentSong.singer"></h2>
+          <h2 class="subtitle" v-html="currentSong.ar[0].name"></h2>
         </div>
         <div
           class="middle"
@@ -29,7 +33,10 @@
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
-                <img class="image" :src="currentSong.image" />
+                <img
+                  class="image"
+                  :src="currentSong.al && currentSong.al.picUrl"
+                />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -49,6 +56,7 @@
                   v-for="(line, index) in currentLyric.lines"
                   class="text"
                   :class="{ current: currentLineNum === index }"
+                  :key="index"
                 >
                   {{ line.txt }}
                 </p>
@@ -74,7 +82,7 @@
                 @percentChange="onProgressBarChangeByUser"
               ></progress-bar>
             </div>
-            <span class="time time-r">{{ format(currentSong.duration) }}</span>
+            <span class="time time-r">{{ format(currentSong.dt) }}</span>
           </div>
           <div class="operators">
             <div class="icon i-left" @click="changeMode">
@@ -104,11 +112,11 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="miniOrNormal(2)">
         <div class="icon">
-          <img width="40" height="40" :src="currentSong.image" :class="cdCls" />
+          <img width="40" height="40" :src="currentSong.al && currentSong.al.picUrl" :class="cdCls" />
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
-          <p class="desc" v-html="currentSong.singer"></p>
+          <p class="desc" v-html="currentSong.ar[0].name"></p>
         </div>
         <div class="control">
           <progress-circle :radius="radius" :percent="percent">
@@ -138,17 +146,19 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-import animations from 'create-keyframe-animation'; //js中创建CSS动画的第三方库
+import animations from 'create-keyframe-animation'; // js中创建CSS动画的第三方库
 import { prefixStyle } from '../../common/js/dom';
 import ProgressBar from '../../base/progress-bar/progress-bar';
 import ProgressCircle from '../../base/progress-circle/progress-circle';
 import { playMode } from '../../common/js/config';
 import { shuffle } from '../../common/js/utils';
-import Lyric from 'lyric-parser'; //解析歌词的第三方库
+import Lyric from 'lyric-parser'; // 解析歌词的第三方库
 import Scroll from '../../base/scroll/scroll';
 import PlayList from '../../components/playlist/playlist';
 
 import { playerMixin } from '../../common/js/mixin';
+
+import { getSongUrl } from '../../api';
 
 const transform = prefixStyle('transform');
 const transitionDuration = prefixStyle('transitionDuration');
@@ -157,13 +167,13 @@ export default {
   mixin: [],
   data() {
     return {
-      songReady: false, //判断歌曲是否准备好，用来防止连续快速点击上下切换歌曲
-      currentTime: 0, //当前歌曲播放的进度
-      radius: 32, //传入的圆形进度条宽度
-      currentLyric: null, //当前歌词对象
-      currentLineNum: 0, //当前歌词播放到第几行
-      currentShow: 'cd', //当前显示cd转片还是歌词列表
-      playingLyric: '', //正在播放到的歌词
+      songReady: false, // 判断歌曲是否准备好，用来防止连续快速点击上下切换歌曲
+      currentTime: 0, // 当前歌曲播放的进度
+      radius: 32, // 传入的圆形进度条宽度
+      currentLyric: null, // 当前歌词对象
+      currentLineNum: 0, // 当前歌词播放到第几行
+      currentShow: 'cd', // 当前显示cd转片还是歌词列表
+      playingLyric: '' // 正在播放到的歌词
     };
   },
   created() {
@@ -173,7 +183,7 @@ export default {
     showPlaylist() {
       this.$refs.playlist.show();
     },
-    //放大或缩小播放器
+    // 放大或缩小播放器
     miniOrNormal(type) {
       // console.log(this.currentSong);
       if (type === 1) {
@@ -183,7 +193,7 @@ export default {
       }
     },
     togglePlaying() {
-      //设置播放状态
+      // 设置播放状态
       if (!this.songReady) {
         return;
       }
@@ -192,24 +202,24 @@ export default {
         this.currentLyric.togglePlay();
       }
     },
-    //播放下一首,当currentIndex改变时，currentSong也会改变
+    // 播放下一首,当currentIndex改变时，currentSong也会改变
     next() {
       if (!this.songReady) {
-        //防止连续点击
+        // 防止连续点击
         return;
       }
       if (this.playList.length === 1) {
-        //播放列表只有一首歌
+        // 播放列表只有一首歌
         this.loop();
         return;
       } else {
         let index = this.currentIndex + 1;
-        if (index == this.playList.length) {
+        if (index === this.playList.length) {
           index = 0;
         }
         this.setCurrentIndex(index);
         if (!this.playing) {
-          //切换暂停按钮的显示
+          // 切换暂停按钮的显示
           this.togglePlaying();
         }
       }
@@ -220,17 +230,17 @@ export default {
         return;
       }
       if (this.playList.length === 1) {
-        //播放列表只有一首歌
+        // 播放列表只有一首歌
         this.loop();
         return;
       } else {
         let index = this.currentIndex - 1;
-        if (index == -1) {
+        if (index === -1) {
           index = this.playList.length - 1;
         }
         this.setCurrentIndex(index);
         if (!this.playing) {
-          //切换暂停按钮的显示
+          // 切换暂停按钮的显示
           this.togglePlaying();
         }
       }
@@ -239,24 +249,25 @@ export default {
     disableCls() {
       return this.songReady ? '' : 'disable';
     },
-    //audio加载成功的回调
+    // audio加载成功的回调
     ready() {
       this.songReady = true;
-      //将当前歌曲加入到播放历史中
+      // 将当前歌曲加入到播放历史中
       this.savePlayHistory(this.currentSong);
     },
-    //audio加载失败的回调
+    // audio加载失败的回调
     error() {
       this.songReady = true;
     },
-    //audio时间更新的回调
+    // audio时间更新的回调
     updateTime(e) {
+      console.log('eeeeee', e)
       this.currentTime = e.target.currentTime;
     },
-    //audio播放完成的回调
+    // audio播放完成的回调
     end() {
-      if (this.mode == playMode.loop) {
-        //单曲循环
+      if (this.mode === playMode.loop) {
+        // 单曲循环
         this.loop();
       } else {
         this.next();
@@ -266,7 +277,7 @@ export default {
       this.$refs.audio.currentTime = 0;
       this.$refs.audio.play();
       if (this.currentLyric) {
-        this.currentLyric.seek(0); //歌词要重新开始
+        this.currentLyric.seek(0); // 歌词要重新开始
       }
     },
     toggleFavorite(song) {
@@ -283,14 +294,14 @@ export default {
       return 'icon-not-favorite';
     },
     isFavorite(song) {
-      const index = this.favoriteList.findIndex((item) => {
+      const index = this.favoriteList.findIndex(item => {
         return item.id === song.id;
       });
       return index > -1;
     },
-    //用户操作进度条变化的监听
+    // 用户操作进度条变化的监听
     onProgressBarChangeByUser(percent) {
-      const currentTime = this.currentSong.duration * percent;
+      const currentTime = this.currentSong.dt * percent;
       this.$refs.audio.currentTime = currentTime;
       if (!this.playing) {
         this.togglePlaying();
@@ -299,7 +310,7 @@ export default {
         this.currentLyric.seek(currentTime * 1000);
       }
     },
-    //改变播放模式
+    // 改变播放模式
     changeMode() {
       const mode = (this.mode + 1) % 3;
       this.setPlayMode(mode);
@@ -309,24 +320,24 @@ export default {
       } else {
         list = this.sequenceList;
       }
-      this.resetCurrentIndex(list); //设置当前的歌曲的index，防止改变播放模式之后歌曲播放顺序变了会导致当前的歌曲也会变化
+      this.resetCurrentIndex(list); // 设置当前的歌曲的index，防止改变播放模式之后歌曲播放顺序变了会导致当前的歌曲也会变化
       this.setPlayList(list);
     },
     resetCurrentIndex(list) {
-      let index = list.findIndex((item) => item.id === this.currentSong.id);
+      let index = list.findIndex(item => item.id === this.currentSong.id);
       this.setCurrentIndex(index);
     },
-    //获取歌词
+    // 获取歌词
     getLyric() {
       this.currentSong
         .getLyric()
-        .then((lyric) => {
+        .then(lyric => {
           // if (this.currentSong.lyric !== lyric) {
           //   return
           // }
           this.currentLyric = new Lyric(lyric, this.handleLyric);
           if (this.playing) {
-            this.currentLyric.play(); //歌词滚动
+            this.currentLyric.play(); // 歌词滚动
           }
         })
         .catch(() => {
@@ -335,7 +346,7 @@ export default {
           this.currentLineNum = 0;
         });
     },
-    //歌词播放的回调 lineNum：播放到的行数，txt：歌词信息
+    // 歌词播放的回调 lineNum：播放到的行数，txt：歌词信息
     handleLyric({ lineNum, txt }) {
       this.currentLineNum = lineNum;
       if (lineNum > 5) {
@@ -346,14 +357,14 @@ export default {
       }
       this.playingLyric = txt;
     },
-    //格式化时间
+    // 格式化时间
     format(interval) {
-      interval = interval | 0;
+      interval = (interval / 1000) | 0;
       const minute = (interval / 60) | 0;
       const second = this._pad(interval % 60);
       return `${minute}:${second}`;
     },
-    //时间不足两位的，在前面补0
+    // 时间不足两位的，在前面补0
     _pad(num, n = 2) {
       let len = num.toString().length;
       while (len < n) {
@@ -442,14 +453,14 @@ export default {
       const { x, y, scale } = this._getPosAndScale();
       let animation = {
         0: {
-          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`,
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
         },
         70: {
-          transform: `translate3d(0,0,0) scale(1.2)`,
+          transform: `translate3d(0,0,0) scale(1.2)`
         },
         100: {
-          transform: `translate3d(0,0,0) scale(1)`,
-        },
+          transform: `translate3d(0,0,0) scale(1)`
+        }
       };
 
       animations.registerAnimation({
@@ -457,8 +468,8 @@ export default {
         animation,
         presets: {
           duration: 400,
-          easing: 'linear',
-        },
+          easing: 'linear'
+        }
       });
 
       animations.runAnimation(this.$refs.cdWrapper, 'move', done);
@@ -480,20 +491,20 @@ export default {
       this.$refs.cdWrapper.style[transform] = '';
     },
 
-    //cd转动盘初始动画的坐标
+    // cd转动盘初始动画的坐标
     _getPosAndScale() {
-      const targetWidth = 40; //底部小cd转片的宽度
-      const paddingLeft = 40; //小cd转片中心距离左边的距离
-      const paddingBottom = 30; //小cd转片中心距离底部的距离
-      const paddingTop = 80; //大cd转片中心距离顶部的距离
-      const width = window.innerWidth * 0.8; //大cd转片的宽度 样式设置为80%
-      const scale = targetWidth / width; //缩放比例
-      const x = -(window.innerWidth / 2 - paddingLeft); //初始时大cd转片的x偏移量
-      const y = window.innerHeight - paddingTop - width / 2 - paddingBottom; //初始时大cd转片的Y偏移量
+      const targetWidth = 40; // 底部小cd转片的宽度
+      const paddingLeft = 40; // 小cd转片中心距离左边的距离
+      const paddingBottom = 30; // 小cd转片中心距离底部的距离
+      const paddingTop = 80; // 大cd转片中心距离顶部的距离
+      const width = window.innerWidth * 0.8; // 大cd转片的宽度 样式设置为80%
+      const scale = targetWidth / width; // 缩放比例
+      const x = -(window.innerWidth / 2 - paddingLeft); // 初始时大cd转片的x偏移量
+      const y = window.innerHeight - paddingTop - width / 2 - paddingBottom; // 初始时大cd转片的Y偏移量
       return {
         x,
         y,
-        scale,
+        scale
       };
     },
     ...mapMutations({
@@ -501,24 +512,20 @@ export default {
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayMode: 'SET_PLAY_MODE',
-      setPlayList: 'SET_PLAYLIST',
+      setPlayList: 'SET_PLAYLIST'
     }),
-    ...mapActions([
-      'savePlayHistory',
-      'deleteFavoriteList',
-      'saveFavoriteList',
-    ]),
+    ...mapActions(['savePlayHistory', 'deleteFavoriteList', 'saveFavoriteList'])
   },
   computed: {
-    //播放进度
+    // 播放进度
     percent() {
-      return this.currentTime / this.currentSong.duration;
+      return this.currentTime / this.currentSong.dt;
     },
     cdCls() {
-      //唱片的转动
-      return this.playing ? 'play' : 'play pause'; //添加相应的class，class中有annimation动画
+      // 唱片的转动
+      return this.playing ? 'play' : 'play pause'; // 添加相应的class，class中有annimation动画
     },
-    //播放暂停图片的改变
+    // 播放暂停图片的改变
     iconPlay() {
       return this.playing ? 'icon-pause' : 'icon-play';
     },
@@ -543,42 +550,44 @@ export default {
       'currentIndex',
       'mode',
       'sequenceList',
-      'favoriteList',
-    ]),
+      'favoriteList'
+    ])
   },
   watch: {
-    //监视播放状态的变化让audio暂停或停止
+    // 监视播放状态的变化让audio暂停或停止
     playing(newPlay) {
       this.$nextTick(() => {
         const audio = this.$refs.audio;
         newPlay ? audio.play() : audio.pause();
       });
     },
-    currentSong(newSong, oldSong) {
-      if (!newSong.id || !newSong.url || newSong.id === oldSong.id) {
+    async currentSong(newSong, oldSong) {
+      if (!newSong.id || newSong.id === oldSong.id) {
         return;
       }
-      if (this.currentLyric) {
-        //如果当前有歌词解析对象，先停止
-        this.currentLyric.stop();
-        this.currentTime = 0;
-        this.playingLyric = '';
-        this.currentLineNum = 0;
-      }
+      const res = await getSongUrl(newSong.id);
+      const songUrl = res.data[0].url;
+      // if (this.currentLyric) {
+      //   // 如果当前有歌词解析对象，先停止
+      //   this.currentLyric.stop();
+      //   this.currentTime = 0;
+      //   this.playingLyric = '';
+      //   this.currentLineNum = 0;
+      // }
       this.songReady = false;
-      this.$refs.audio.src = newSong.url;
+      this.$refs.audio.src = songUrl;
       this.$nextTick(() => {
         this.$refs.audio.play();
-        this.getLyric(); //获取歌词
+        // this.getLyric(); // 获取歌词
       });
-    },
+    }
   },
   components: {
     ProgressBar,
     ProgressCircle,
     Scroll,
-    PlayList,
-  },
+    PlayList
+  }
 };
 </script>
 
@@ -602,8 +611,8 @@ export default {
       width: 100%
       height: 100%
       z-index: -1
-      opacity: 0.6
-      filter: blur(20px)
+      opacity: 0.7
+      filter: blur(10px)
 
     .top
       position: relative

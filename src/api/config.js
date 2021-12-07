@@ -11,4 +11,4 @@ export const options = {
   param: 'jsonpCallback', // jsonp回调函数的名称
 };
 
-export const ERR_OK = 0;
+export const ERR_OK = 200;

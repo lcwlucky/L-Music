@@ -16,36 +16,36 @@ function findIndex(list, song) {
   });
 }
 export default {
-  //点击某首音乐播放
+  // 点击某首音乐播放
   setSelectPlay({ commit, state }, { list, index }) {
-    console.log(index);
-    commit(types.SET_SEQUENCE_LIST, list); //音乐顺序列表
+    console.log(index, list);
+    commit(types.SET_SEQUENCE_LIST, list); // 音乐顺序列表
     if (state.mode === playMode.random) {
-      //如果播放模式是随机
-      let randomList = shuffle(list); //设置播放列表为乱序
+      // 如果播放模式是随机
+      let randomList = shuffle(list); // 设置播放列表为乱序
       commit(types.SET_PLAYLIST, randomList);
-      index = randomList.findIndex((item) => item.id === list[index].id); //找到当前点击的歌曲在乱序中的下标位置
+      index = randomList.findIndex((item) => item.id === list[index].id); // 找到当前点击的歌曲在乱序中的下标位置
     } else {
-      commit(types.SET_PLAYLIST, list); //音乐播放列表
+      commit(types.SET_PLAYLIST, list); // 音乐播放列表
     }
 
-    commit(types.SET_CURRENT_INDEX, index); //当前播放下标
-    commit(types.SET_FULL_SCREEN, true); //全屏标志
-    commit(types.SET_PLAYING_STATE, true); //播放状态
+    commit(types.SET_CURRENT_INDEX, index); // 当前播放下标
+    commit(types.SET_FULL_SCREEN, true); // 全屏标志
+    commit(types.SET_PLAYING_STATE, true); // 播放状态
   },
 
   randomPlay({ commit }, { list }) {
-    //music-list 组件中随机播放按钮点击事件
-    commit(types.SET_PLAY_MODE, playMode.random); //设置播放模式
-    commit(types.SET_SEQUENCE_LIST, list); //音乐顺序列表
+    // music-list 组件中随机播放按钮点击事件
+    commit(types.SET_PLAY_MODE, playMode.random); // 设置播放模式
+    commit(types.SET_SEQUENCE_LIST, list); // 音乐顺序列表
     let randomList = shuffle(list);
-    commit(types.SET_PLAYLIST, randomList); //音乐播放列表
-    commit(types.SET_CURRENT_INDEX, 0); //当前音乐播放下标
-    commit(types.SET_FULL_SCREEN, true); //全屏标志
-    commit(types.SET_PLAYING_STATE, true); //播放状态
+    commit(types.SET_PLAYLIST, randomList); // 音乐播放列表
+    commit(types.SET_CURRENT_INDEX, 0); // 当前音乐播放下标
+    commit(types.SET_FULL_SCREEN, true); // 全屏标志
+    commit(types.SET_PLAYING_STATE, true); // 播放状态
   },
 
-  /*插入一首歌到播放列表中*/
+  /* 插入一首歌到播放列表中 */
   insertSong({ commit, state }, song) {
     let playlist = state.playList.slice();
     let sequenceList = state.sequenceList.slice();
@@ -87,7 +87,7 @@ export default {
     commit(types.SET_PLAYING_STATE, true);
   },
 
-  /*插入一条记录到搜索记录中*/
+  /* 插入一条记录到搜索记录中 */
   saveSearchHistory({ commit }, query) {
     commit(types.SET_SEARCH_HISTORY, saveSearch(query));
   },
@@ -100,7 +100,7 @@ export default {
     commit(types.SET_SEARCH_HISTORY, clearSearch());
   },
 
-  //从播放列表中删除某首歌
+  // 从播放列表中删除某首歌
   deleteSong({ commit, state }, song) {
     let playlist = state.playList.slice();
     let sequenceList = state.sequenceList.slice();
@@ -124,7 +124,7 @@ export default {
     }
   },
 
-  //清空播放列表
+  // 清空播放列表
   deleteSongList({ commit }) {
     commit(types.SET_CURRENT_INDEX, -1);
     commit(types.SET_PLAYLIST, []);
@@ -132,7 +132,7 @@ export default {
     commit(types.SET_PLAYING_STATE, false);
   },
 
-  //插入一首歌到播放历史中
+  // 插入一首歌到播放历史中
   savePlayHistory({ commit }, song) {
     commit(types.SET_PLAY_HISTORY, savePlay(song));
   },

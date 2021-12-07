@@ -25,21 +25,21 @@ export default {
   props: {
     songs: {
       type: Array,
-      default: [],
+      default: []
     },
     rank: {
-      //标志是否是排行榜显示
+      // 标志是否是排行榜显示
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   methods: {
-    //歌曲描述
+    // 歌曲描述
     getDesc(song) {
-      return `${song.singer} - ${song.album}`;
+      return song.ar[0] ? song.ar[0].name : '未知歌手';
     },
     selectItem(item, index) {
-      this.$emit('select', item, index); //派发item的点击事件
+      this.$emit('select', item, index); // 派发item的点击事件
     },
     getRankCls(index) {
       if (index <= 2) {
@@ -52,8 +52,8 @@ export default {
       if (index > 2) {
         return index + 1;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

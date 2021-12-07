@@ -13,14 +13,6 @@
             :delay="delay"
             @loadFinish="loadFinish"
           />
-          <!--          <slider>-->
-          <!--            <div v-for="item in recommends">-->
-          <!--              <a :href="item.linkUrl">-->
-          <!--                &lt;!&ndash;class="needsclick" fastclick提供的防止与其他click冲突的解决&ndash;&gt;-->
-          <!--                <img class="needsclick" :src="item.picUrl" @load="loadImage">-->
-          <!--              </a>-->
-          <!--            </div>-->
-          <!--          </slider>-->
         </div>
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
@@ -32,11 +24,10 @@
               @click="selectItem(item)"
             >
               <div class="icon">
-                <img width="60" height="60" v-lazy="item.imgurl" />
+                <img width="60" height="60" v-lazy="item.picUrl" />
               </div>
               <div class="text">
-                <h2 class="name" v-html="item.creator.name"></h2>
-                <p class="desc" v-html="item.dissname"></p>
+                <p class="name" v-html="item.name"></p>
               </div>
             </li>
           </ul>
@@ -52,7 +43,7 @@
 
 <script>
 import { ERR_OK } from '../../api/config';
-import { getRecommend, getDiscList } from '../../api/recommend';
+import { getRecommend, getDiscList } from '../../api';
 import Slider from '../../base/slider/slider';
 import Scroll from '../../base/scroll/scroll';
 import Loading from '../../base/loading/loading';
@@ -66,7 +57,7 @@ export default {
     return {
       recommends: [],
       discList: [],
-      delay: 3000,
+      delay: 3000
     };
   },
   created() {
@@ -74,19 +65,18 @@ export default {
     this._getDiscList();
   },
   methods: {
-    _getRecommend() {
-      getRecommend().then((res) => {
-        if (res.code === ERR_OK) {
-          this.recommends = res.data.slider;
-        }
-      });
+    async _getRecommend() {
+      const res = await getRecommend();
+      if (res.code === ERR_OK) {
+        this.recommends = res.banners;
+      }
     },
-    _getDiscList() {
-      getDiscList().then((res) => {
-        if (res.code === ERR_OK) {
-          this.discList = res.data.list;
-        }
-      });
+
+    async _getDiscList() {
+      const res = await getDiscList();
+      if (res.code === ERR_OK) {
+        this.discList = res.result;
+      }
     },
     // 轮播图图片加载成功的回调
     loadFinish() {
@@ -95,7 +85,7 @@ export default {
       this.$refs.scroll.refresh();
     },
     selectItem(item) {
-      this.$router.push({ path: `/recommend/${item.dissid}` });
+      this.$router.push({ path: `/recommend/${item.id}` });
       this.setCurrentDisc(item);
     },
 
@@ -107,15 +97,15 @@ export default {
     },
 
     ...mapMutations({
-      setCurrentDisc: 'SET_DISC',
-    }),
+      setCurrentDisc: 'SET_DISC'
+    })
   },
   components: {
     Slider,
     Loading,
     Scroll,
-    Carousel,
-  },
+    Carousel
+  }
 };
 </script>
 
@@ -158,10 +148,7 @@ export default {
           overflow: hidden
           font-size: $font-size-medium
           .name
-            margin-bottom: 10px
             color: $color-text
-          .desc
-            color: $color-text-d
     .loading-container
       position: absolute
       width: 100%

@@ -10,17 +10,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api/getDiscList': {
-        target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
-        bypass: function (req, res, proxyOptions) {
-          // 利用服务器反向代理伪造host和referer解决,也可以在webpack.dev.conf.js文件中用axios转发来进行referer伪造
-          req.headers.referer = 'https://c.y.qq.com/';
-          req.headers.host = 'c.y.qq.com';
-        },
-        pathRewrite: {
-          // 重写路径
-          '^/api/getDiscList': '',
-        },
+      '/banner': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      },
+      '/personalized': {
+        target: 'https://localhost:3000',
+        changeOrigin: true
       },
       '/api/getSongUrl': {
         // 获取歌曲url
@@ -28,8 +24,8 @@ module.exports = {
         changeOrigin: true, // 支持跨域
         pathRewrite: {
           // 重写路径
-          '^/api/getSongUrl': '',
-        },
+          '^/api/getSongUrl': ''
+        }
       },
       '/api/getLyric': {
         // 获取歌词
@@ -37,8 +33,8 @@ module.exports = {
         changeOrigin: true, // 支持跨域
         pathRewrite: {
           // 重写路径
-          '^/api/getLyric': '',
-        },
+          '^/api/getLyric': ''
+        }
       },
       '/api/getCdInfo': {
         // 获取歌单歌曲列表
@@ -46,8 +42,8 @@ module.exports = {
         changeOrigin: true, // 支持跨域
         pathRewrite: {
           // 重写路径
-          '^/api/getCdInfo': '',
-        },
+          '^/api/getCdInfo': ''
+        }
       },
       '/api/search': {
         // 搜索
@@ -55,15 +51,19 @@ module.exports = {
         changeOrigin: true, // 支持跨域
         pathRewrite: {
           // 重写路径
-          '^/api/search': '',
-        },
+          '^/api/search': ''
+        }
+      },
+      '*': {
+        target: 'https://localhost:3000',
+        changeOrigin: true
       },
     },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
     // host: '192.168.191.1', // can be overwritten by process.env.HOST
-    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 8888, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -89,7 +89,7 @@ module.exports = {
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
     cacheBusting: true,
 
-    cssSourceMap: true,
+    cssSourceMap: true
   },
 
   build: {
@@ -119,6 +119,6 @@ module.exports = {
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
-    bundleAnalyzerReport: process.env.npm_config_report,
-  },
+    bundleAnalyzerReport: process.env.npm_config_report
+  }
 };

@@ -7,18 +7,18 @@
 
 <script type="text/ecmascript-6">
 import MusicList from '../music-list/music-list'
-import {getSongList} from '../../api/recommend'
+import {getSongList} from '../../api'
 import {ERR_OK} from '../../api/config'
 import {mapGetters} from 'vuex'
-import {createSong,processSongsUrl} from '../../common/js/song'
+import {createSong} from '../../common/js/song'
 
 export default {
   computed: {
     title() {
-      return this.currentDisc.dissname
+      return this.currentDisc.name
     },
     bgImage() {
-      return this.currentDisc.imgurl
+      return this.currentDisc.picUrl
     },
     ...mapGetters([
       'currentDisc'
@@ -34,23 +34,18 @@ export default {
   },
   methods: {
     _getSongList() {
-      if (!this.currentDisc.dissid) { //如果用户在本页面刷新，没有重recommend传过来，当前没有歌单
+      if (!this.currentDisc.id) { // 如果用户在本页面刷新，没有重recommend传过来，当前没有歌单
         this.$router.push('/recommend')
         return
       }
-      //传入歌单id获取歌单歌曲数据
-      getSongList(this.currentDisc.dissid).then((res) => {
+      // 传入歌单id获取歌单歌曲数据
+      getSongList(this.currentDisc.id).then((res) => {
         if (res.code === ERR_OK) {
-          // this.songs = this._normalizeSongs(res.cdlist[0].songlist)
-          //解析每首歌的播放地址
-          processSongsUrl(this._normalizeSongs(res.cdlist[0].songlist)).then((songs) => {
-            this.songs = songs
-          })
+          this.songs = res.songs
         }
-
       })
     },
-    //把数据转成我们想要的格式化数据
+    // 把数据转成我们想要的格式化数据
     _normalizeSongs(list) {
       let ret = []
       list.forEach((musicData) => {

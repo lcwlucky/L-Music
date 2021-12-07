@@ -27,7 +27,7 @@ export default {
     this._getSingerList();
   },
   methods: {
-    //获取歌手数据
+    // 获取歌手数据
     _getSingerList() {
       getSingerList().then((res) => {
         if (res.code === ERR_OK) {
@@ -36,7 +36,7 @@ export default {
       });
     },
 
-    //初始化歌手数组，让其按 热门 A B - Z排序
+    // 初始化歌手数组，让其按 热门 A B - Z排序
     _normalizeSinger(list) {
       let map = {
         hot: {
@@ -84,7 +84,7 @@ export default {
       return hot.concat(ret);
     },
 
-    //listview组件item的回调
+    // listview组件item的回调
     selectSinger(singer) {
       this.$router.push({
         path: `/singer/${singer.id}`,
@@ -96,7 +96,7 @@ export default {
     }),
 
     handlePlaylist(playlist) {
-      //mixin中当播放列表发生变化时
+      // mixin中当播放列表发生变化时
       const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.singer.style.bottom = bottom;
       this.$refs.list.refresh();

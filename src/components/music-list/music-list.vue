@@ -41,9 +41,9 @@ import {prefixStyle} from '../../common/js/dom'
 import {mapActions} from 'vuex'
 import {playlistMixin} from '../../common/js/mixin'
 
-const RESERVED_HEIGHT = 40  //顶部titleBar的高度
+const RESERVED_HEIGHT = 40  // 顶部titleBar的高度
 const transform = prefixStyle('transform')
-const backdrop = prefixStyle('backdrop-filter') //模糊，iphone下有效
+const backdrop = prefixStyle('backdrop-filter') // 模糊，iphone下有效
 
 export default {
   mixins:[playlistMixin],
@@ -60,7 +60,7 @@ export default {
       type: String,
       default: ''
     },
-    rank: {  //标志是否是排行榜显示
+    rank: {  // 标志是否是排行榜显示
       type: Boolean,
       default: false
     }
@@ -80,35 +80,35 @@ export default {
     }
   },
   mounted() {
-    //缓存顶部歌手图片高度。不用每次都进行dom操作
+    // 缓存顶部歌手图片高度。不用每次都进行dom操作
     this.imageHeight = this.$refs.bgImage.clientHeight
-    //layer层向上移动的最小距离，即能滑到最上面
+    // layer层向上移动的最小距离，即能滑到最上面
     this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
-    //设置scroll组件的top值，恰好在图片下面
+    // 设置scroll组件的top值，恰好在图片下面
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
   methods: {
-    handlePlaylist(playlist) { //mixin中当播放列表发生变化时
+    handlePlaylist(playlist) { // mixin中当播放列表发生变化时
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.list.$el.style.bottom = bottom
       this.$refs.list.refresh()
     },
-    //监听scroll组件的回调
+    // 监听scroll组件的回调
     scroll(pos) {
       this.scrollY = pos.y
     },
     back() {
       this.$router.back()
     },
-    random() {//点击随机播放
+    random() {// 点击随机播放
       this.randomPlay({
         list: this.songs
       })
     },
-    //监听song-list的点击事件
-    selectSong(item,index) {
+    // 监听song-list的点击事件
+    selectSong(item, index) {
       this.setSelectPlay({
-        list:this.songs,
+        list: this.songs,
         index
       })
     },
@@ -117,29 +117,29 @@ export default {
   },
   watch: {
     scrollY(newVal) {
-      let zIndex = 0 //bgImage图片容器的层级
-      let scale = 1 ////向下滑动图片大小放大的比例
+      let zIndex = 0 // bgImage图片容器的层级
+      let scale = 1 /// /向下滑动图片大小放大的比例
       let blur = 0
-      const percent = Math.abs(newVal / this.imageHeight) //放大因子
+      const percent = Math.abs(newVal / this.imageHeight) // 放大因子
       // layer层最多移动到titleBer底下
       let translateY =  Math.max(this.minTransalteY, newVal)
-      if (newVal > 0) { //sroll组件大于0表示向下拉
+      if (newVal > 0) { // sroll组件大于0表示向下拉
         scale = 1 + percent
         zIndex = 10
       } else {
         blur = Math.min(20, percent * 20)
       }
-      //用一个layer层铺在scroll的下面，当设置scroll滚动可以超出，滚动scroll组件时layer层也跟着上下移动
+      // 用一个layer层铺在scroll的下面，当设置scroll滚动可以超出，滚动scroll组件时layer层也跟着上下移动
       this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
-      this.$refs.filter.style[backdrop] = `blur(${blur}px)` //模糊效果，只在iPhone下有效
-      //如果滑动距离超过了titleBar底下
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)` // 模糊效果，只在iPhone下有效
+      // 如果滑动距离超过了titleBar底下
       if(newVal < translateY){
         // 歌手图片的层级要提高以盖住scroll文字,且高度要改变为定义的titleBar的高度
         zIndex = 10
         this.$refs.bgImage.style.height = RESERVED_HEIGHT + 'px'
         this.$refs.bgImage.style.paddingTop = '0'
         this.$refs.playBtn.style.display = 'none'
-      }else{//如果滑动距离不超过titleBar底下，则bgImage不变
+      }else{// 如果滑动距离不超过titleBar底下，则bgImage不变
         this.$refs.bgImage.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
         this.$refs.playBtn.style.display = ''

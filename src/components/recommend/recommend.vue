@@ -43,7 +43,7 @@
 
 <script>
 import { ERR_OK } from '../../api/config';
-import { getRecommend, getDiscList } from '../../api';
+import { getRecommedList, getBanner } from '../../api';
 import Slider from '../../base/slider/slider';
 import Scroll from '../../base/scroll/scroll';
 import Loading from '../../base/loading/loading';
@@ -61,19 +61,19 @@ export default {
     };
   },
   created() {
-    this._getRecommend(); // 获取轮播图
-    this._getDiscList();
+    this._getBanner(); // 获取轮播图
+    this._getRecommedList();
   },
   methods: {
-    async _getRecommend() {
-      const res = await getRecommend();
+    async _getBanner() {
+      const res = await getBanner();
       if (res.code === ERR_OK) {
         this.recommends = res.banners;
       }
     },
 
-    async _getDiscList() {
-      const res = await getDiscList();
+    async _getRecommedList() {
+      const res = await getRecommedList();
       if (res.code === ERR_OK) {
         this.discList = res.result;
       }

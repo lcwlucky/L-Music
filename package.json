@@ -1,8 +1,8 @@
 {
-  "name": "LMusic",
+  "name": "l-music",
   "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "luo_glb <798443266_glb@qq.com>",
+  "description": "a web app to listening music",
+  "author": "lcwlucky",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

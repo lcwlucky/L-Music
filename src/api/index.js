@@ -1,10 +1,12 @@
 import request from './fetch';
 
-export function getRecommend() {
+// 获取轮播图
+export function getBanner() {
   return request('/banner');
 }
 
-export function getDiscList() {
+// 获取推荐页歌单列表
+export function getRecommedList() {
   return request('/personalized');
 }
 
@@ -15,6 +17,12 @@ export function getSongList(id) {
   });
 }
 
+// 获取歌曲播放地址
 export function getSongUrl(id) {
   return request.get('/song/url', { params: { id } });
 }
+
+// 获取歌词
+export const getLyricRequest = id => {
+  return request.get(`/lyric?id=${id}`);
+};

@@ -1,6 +1,6 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { playMode } from './config';
-import { shuffle } from './utils';
+import { shuffle } from '../../utils';
 
 /* vue组件混入 */
 

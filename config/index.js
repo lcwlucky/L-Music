@@ -11,24 +11,6 @@ module.exports = {
 				changeOrigin: true,
 				pathRewrite: { '^/api': '' },
 			},
-      '/api/getCdInfo': {
-        // 获取歌单歌曲列表
-        target: 'http://ustbhuangyi.com/music/api/getCdInfo',
-        changeOrigin: true, // 支持跨域
-        pathRewrite: {
-          // 重写路径
-          '^/api/getCdInfo': ''
-        }
-      },
-      '/api/search': {
-        // 搜索
-        target: 'http://ustbhuangyi.com/music/api/search',
-        changeOrigin: true, // 支持跨域
-        pathRewrite: {
-          // 重写路径
-          '^/api/search': ''
-        }
-      },
     },
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 8888, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
@@ -49,8 +31,7 @@ module.exports = {
      */
 
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
-
+    devtool: 'cheap-module-source-map',
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
     // https://vue-loader.vuejs.org/en/options.html#cachebusting

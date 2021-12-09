@@ -37,6 +37,10 @@ export default {
     refreshDelay: {
       type: Number,
       default: 20
+    },
+    direction: {
+      type: String,
+      default: 'vertical'
     }
   },
   mounted() {
@@ -52,7 +56,9 @@ export default {
       }
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
-        click: this.click
+        click: this.click,
+        scrollX: this.direction === "horizontal",
+        scrollY: this.direction === "vertical",
       })
 
       if (this.listenScroll) {

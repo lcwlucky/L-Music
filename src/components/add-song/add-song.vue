@@ -77,7 +77,6 @@ import TopTip from '../../base/top-tip/top-tip'
 import Suggest from '../../components/suggest/suggest'
 import {searchMixin} from '../../common/js/mixin'
 import {mapGetters, mapActions} from 'vuex'
-import Song from '../../common/js/song'
 
 export default {
   mixins: [searchMixin],
@@ -119,7 +118,7 @@ export default {
     //点击播放历史中的某条插入到播放列表中
     selectSong(song, index) {
       if (index !== 0) { //第一条为正在播放的不用管
-        this.insertSong(new Song(song))
+        this.insertSong(song)
         this.$refs.topTip.show()
       }
     },

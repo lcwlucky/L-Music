@@ -1,87 +1,100 @@
 <template>
-  <div class="singer" ref="singer">
-    <Listview :data="singers" @select="selectSinger" ref="list" />
+  <div ref="singer">
+    <horizon
+      @onClick="handleChangeCategory"
+      title="分类(默认热门):"
+      :list="categoryTypes"
+      :oldVal="category"
+    ></horizon>
+    <horizon
+      @onClick="handleChangeAlpha"
+      title="首字母:"
+      :list="alphaTypes"
+      :oldVal="alpha"
+    ></horizon>
+    <scroll
+      :data="singers"
+      ref="scroll"
+      class="list"
+      :style="{ height: '100%', overflow: 'hidden' }"
+    >
+      <div>
+        <div
+          class="list-item"
+          v-for="(item, i) in singers"
+          :key="i"
+          @click="selectSinger(item)"
+        >
+          <div class="img_wrapper">
+            <img
+              :src="`${item.picUrl}?param=300x300`"
+              width="100%"
+              height="100%"
+              alt="music"
+            />
+          </div>
+          <span class="name">{{ item.name }}</span>
+        </div>
+      </div>
+    </scroll>
+    <!-- <Listview :data="singers" @select="selectSinger" ref="list" /> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { ERR_OK } from '../../api/config';
-import { getSingerList } from '../../api/singer';
-import Singer from '../../common/js/singer';
+import { getSingerListRequest, getHotSingerListRequest } from '../../api';
 import Listview from '../../base/listview/listview';
 import { mapMutations } from 'vuex';
 import { playlistMixin } from '../../common/js/mixin';
-
-const HOT_SINGER_LEN = 10;
-const HOT_NAME = '热门';
+import Horizon from './Horizon.vue';
+import { categoryTypes, alphaTypes } from '../../api/config';
+import Scroll from '../../base/scroll/scroll.vue';
 
 export default {
   mixins: [playlistMixin],
   data() {
     return {
       singers: [],
+      categoryTypes,
+      alphaTypes,
+      category: '',
+      alpha: '',
     };
   },
   created() {
-    this._getSingerList();
+    this.getSingerList();
+  },
+  watch: {
+    async category(val) {
+      const res = await getSingerListRequest(val, this.alpha);
+      if (res.code === ERR_OK) {
+        this.singers = res.artists;
+      }
+    },
+    async alpha(val) {
+      const res = await getSingerListRequest(this.category, val);
+      if (res.code === ERR_OK) {
+        this.singers = res.artists;
+      }
+    },
   },
   methods: {
     // 获取歌手数据
-    _getSingerList() {
-      getSingerList().then((res) => {
-        if (res.code === ERR_OK) {
-          this.singers = this._normalizeSinger(res.data.list);
-        }
-      });
+    async getSingerList() {
+      const res = await getHotSingerListRequest(0);
+      if (res.code === ERR_OK) {
+        this.singers = res.artists;
+      }
     },
 
-    // 初始化歌手数组，让其按 热门 A B - Z排序
-    _normalizeSinger(list) {
-      let map = {
-        hot: {
-          title: HOT_NAME,
-          items: [],
-        },
-      };
-      list.forEach((item, index) => {
-        if (index < HOT_SINGER_LEN) {
-          map.hot.items.push(
-            new Singer({
-              name: item.Fsinger_name,
-              id: item.Fsinger_mid,
-            })
-          );
-        }
-        const key = item.Findex;
-        if (!map[key]) {
-          map[key] = {
-            title: key,
-            items: [],
-          };
-        }
-        map[key].items.push(
-          new Singer({
-            name: item.Fsinger_name,
-            id: item.Fsinger_mid,
-          })
-        );
-      });
-      // 为了得到有序列表，我们需要处理 map
-      let ret = [];
-      let hot = [];
-      for (let key in map) {
-        let val = map[key];
-        if (val.title.match(/[a-zA-Z]/)) {
-          ret.push(val);
-        } else if (val.title === HOT_NAME) {
-          hot.push(val);
-        }
-      }
-      ret.sort((a, b) => {
-        return a.title.charCodeAt(0) - b.title.charCodeAt(0);
-      });
-      return hot.concat(ret);
+    handleChangeCategory(category) {
+      this.category = category;
+    },
+
+    handleChangeAlpha(alpha) {
+      this.alpha = alpha;
     },
 
     // listview组件item的回调
@@ -99,20 +112,38 @@ export default {
       // mixin中当播放列表发生变化时
       const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.singer.style.bottom = bottom;
-      this.$refs.list.refresh();
+      this.$refs.scroll.refresh();
     },
   },
   components: {
     Listview,
+    Horizon,
+    Scroll,
   },
 };
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-/*使用scroll必须有高度，这样才能根据子元素高度计算滑动距离*/
-.singer
+@import "../../common/stylus/variable.styl"
+.list
   position: fixed
-  top: 88px
+  top: 148px
   bottom: 0
   width: 100%
+  overflow hidden
+.list-item
+  display: flex
+  align-items: center
+  margin: 0 5px;
+  padding: 5px 10px;
+.img_wrapper
+  margin-right: 20px;
+  img
+    width: 50px
+    height: 50px
+    border-radius: 3px
+.name
+  font-size: 14px;
+  color: $color-text-ll;
+  font-weight: 500;
 </style>

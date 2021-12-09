@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { debounce } from '../../common/js/utils';
+import { debounce } from '../../utils';
 export default {
   props: {
     placeholder: {
@@ -66,6 +66,8 @@ export default {
     padding 0 5px
     background: $color-highlight-background
     color: $color-text
+    outline: none
+    border: none
     font-size: $font-size-medium
     &::placeholder
       color: $color-text-d

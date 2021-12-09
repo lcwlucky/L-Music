@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
@@ -63,7 +62,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: config.build.index,
       template: 'index.html',
-      inject: true,
+      inject: body,
+      favicon: path.resolve(__dirname, '../public/favicon.ico'),
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -105,15 +105,6 @@ const webpackConfig = merge(baseWebpackConfig, {
       children: true,
       minChunks: 3,
     }),
-
-    // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.build.assetsSubDirectory,
-        ignore: ['.*'],
-      },
-    ]),
   ],
 });
 

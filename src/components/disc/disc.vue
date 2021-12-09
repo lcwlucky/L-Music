@@ -10,7 +10,6 @@ import MusicList from '../music-list/music-list'
 import {getSongList} from '../../api'
 import {ERR_OK} from '../../api/config'
 import {mapGetters} from 'vuex'
-import {createSong} from '../../common/js/song'
 
 export default {
   computed: {
@@ -45,16 +44,6 @@ export default {
         }
       })
     },
-    // 把数据转成我们想要的格式化数据
-    _normalizeSongs(list) {
-      let ret = []
-      list.forEach((musicData) => {
-        if (musicData.songid && musicData.albummid) {
-          ret.push(createSong(musicData))
-        }
-      })
-      return ret
-    }
   },
   components: {
     MusicList

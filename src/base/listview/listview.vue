@@ -72,8 +72,8 @@ export default {
   },
   computed: {
     shortcutList() {// 获取分类名称  热 A B - Z
-      return this.data.map((group) => {
-        return group.title.substr(0, 1)
+      return this.data.map((item) => {
+        return item.name.substr(0, 1).toLocaleUpperCase();
       })
     },
     fixedTitle() {

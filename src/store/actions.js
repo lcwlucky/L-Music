@@ -1,5 +1,5 @@
 import * as types from './mutation-types';
-import { shuffle } from '../common/js/utils';
+import { shuffle } from '../utils';
 import { playMode } from '../common/js/config';
 import {
   saveSearch,
@@ -8,7 +8,7 @@ import {
   savePlay,
   saveFavorite,
   deleteFavorite,
-} from '../common/js/cache';
+} from '../utils/cache';
 
 function findIndex(list, song) {
   return list.findIndex((item) => {
@@ -18,7 +18,6 @@ function findIndex(list, song) {
 export default {
   // 点击某首音乐播放
   setSelectPlay({ commit, state }, { list, index }) {
-    console.log(index, list);
     commit(types.SET_SEQUENCE_LIST, list); // 音乐顺序列表
     if (state.mode === playMode.random) {
       // 如果播放模式是随机
@@ -48,8 +47,18 @@ export default {
   /* 插入一首歌到播放列表中 */
   insertSong({ commit, state }, song) {
     let playlist = state.playList.slice();
-    let sequenceList = state.sequenceList.slice();
     let currentIndex = state.currentIndex;
+    // 之前没有歌曲
+    if (!playlist.length || currentIndex === -1) {
+      console.log('song', song)
+      commit(types.SET_PLAYLIST, [song]);
+      commit(types.SET_SEQUENCE_LIST, [song]);
+      commit(types.SET_CURRENT_INDEX, 0);
+      commit(types.SET_FULL_SCREEN, true);
+      commit(types.SET_PLAYING_STATE, true);
+      return;
+    }
+    let sequenceList = state.sequenceList.slice();
     // 记录当前歌曲
     let currentSong = playlist[currentIndex];
     // 查找当前列表中是否有待插入的歌曲并返回其索引
@@ -79,7 +88,6 @@ export default {
         sequenceList.splice(fsIndex + 1, 1);
       }
     }
-
     commit(types.SET_PLAYLIST, playlist);
     commit(types.SET_SEQUENCE_LIST, sequenceList);
     commit(types.SET_CURRENT_INDEX, currentIndex);

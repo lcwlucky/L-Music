@@ -9,8 +9,13 @@
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
             <ul>
-              <li @click="addQuery(item.k)" class="item" v-for="item in hotKey">
-                <span>{{ item.k }}</span>
+              <li
+                @click="addQuery(item.k)"
+                class="item"
+                v-for="item in hotKeys"
+                :key="item.first"
+              >
+                <span>{{ item.first }}</span>
               </li>
             </ul>
           </div>
@@ -52,11 +57,11 @@ import SearchBox from '../../base/search-box/search-box';
 import Scroll from '../../base/scroll/scroll';
 import SearchList from '../../base/search-list/search-list';
 import Suggest from '../../components/suggest/suggest';
-import { getHotKey } from '../../api/search';
 import { ERR_OK } from '../../api/config';
 import { mapGetters, mapActions } from 'vuex';
 import { playlistMixin } from '../../common/js/mixin';
 import Confirm from '../../base/confirm/confirm';
+import { getHotKeyWordsRequest } from '../../api';
 
 const KEY = 'SEARCH_HISTORY';
 
@@ -64,17 +69,17 @@ export default {
   mixins: [playlistMixin],
   data() {
     return {
-      hotKey: [],
+      hotKeys: [],
       query: '',
     };
   },
   created() {
-    this._getHotKey();
+    this.getHotKeyWords();
   },
   computed: {
     shortcut() {
       //scroll组件传入的data
-      return this.hotKey.concat(this.searchHistory);
+      return this.hotKeys.concat(this.searchHistory);
     },
     ...mapGetters(['searchHistory']),
   },
@@ -88,16 +93,15 @@ export default {
       this.$refs.shortcutWrapper.style.bottom = bottom;
       this.$refs.shortcut.refresh();
     },
-    _getHotKey() {
-      getHotKey().then((res) => {
-        if (res.code === ERR_OK) {
-          if (res.data.hotkey.length <= 10) {
-            this.hotKey = res.data.hotKey;
-          } else {
-            this.hotKey = res.data.hotkey.slice(0, 10);
-          }
+    async getHotKeyWords() {
+      const res = await getHotKeyWordsRequest();
+      if (res.code === ERR_OK) {
+        if (res.result.hots <= 10) {
+          this.hotKeys = res.result.hots;
+        } else {
+          this.hotKeys = res.result.hots.slice(0, 10);
         }
-      });
+      }
     },
     addQuery(query) {
       this.$refs.searchBox.setQuery(query);

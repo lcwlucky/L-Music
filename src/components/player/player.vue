@@ -33,7 +33,7 @@
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
-                <img class="image" :src="currentSong.al.picUrl" />
+                <img class="image" :src="currentSong.al && currentSong.al.picUrl" />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -153,7 +153,7 @@ import { prefixStyle } from '../../common/js/dom';
 import ProgressBar from '../../base/progress-bar/progress-bar';
 import ProgressCircle from '../../base/progress-circle/progress-circle';
 import { playMode } from '../../common/js/config';
-import { shuffle } from '../../common/js/utils';
+import { shuffle } from '../../utils';
 import Lyric from 'lyric-parser'; // 解析歌词的第三方库
 import Scroll from '../../base/scroll/scroll';
 import PlayList from '../../components/playlist/playlist';
@@ -597,6 +597,7 @@ export default {
     },
 
     async currentSong(newSong, oldSong) {
+      console.log('newSong', newSong)
       if (!newSong.id || newSong.id === oldSong.id) {
         return;
       }

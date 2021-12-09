@@ -1,50 +1,48 @@
 <template>
-  <div class="rank" ref="rank">
-    <scroll :data="rankList" class="ranklist" ref="ranklist">
-      <ul>
-        <li @click="selectItem(item)" class="item" v-for="item in rankList">
-          <div class="icon">
-            <img width="100" height="100" v-lazy="item.picUrl" />
-          </div>
-          <ul class="songlist">
-            <li class="song" v-for="(song, index) in item.songList">
-              <span>{{ index + 1 }} </span>
-              <span>{{ song.songname }}-{{ song.singername }}</span>
-            </li>
-          </ul>
-        </li>
-      </ul>
+  <scroll class="rank" ref="rank">
+    <div>
+      <list title="官方榜" :list="officialList" @selectItem="selectItem"></list>
+      <list
+        title="全球榜"
+        :list="globalList"
+        :isGlobal="true"
+        @selectItem="selectItem"
+        :wrapStyle="{ paddingTop: `${officialList.length ? 12 : 0}px` }"
+      ></list>
       <div class="loading-container" v-show="!rankList.length">
         <loading></loading>
       </div>
-    </scroll>
+    </div>
     <router-view></router-view>
-  </div>
+  </scroll>
 </template>
 
 <script>
 import Scroll from '../../base/scroll/scroll';
 import Loading from '../../base/loading/loading';
-import { getRankList } from '../../api/rank';
+import { getRankListRequest } from '../../api';
 import { ERR_OK } from '../../api/config';
 import { playlistMixin } from '../../common/js/mixin';
 import { mapMutations } from 'vuex';
+import { filterIndex } from '../../utils';
+import List from './list.vue';
 
 export default {
   mixins: [playlistMixin],
   created() {
-    this._getRankList();
+    this.getRankList();
   },
   data() {
     return {
       rankList: [],
+      officialList: [],
+      globalList: [],
     };
   },
   methods: {
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : '';
       this.$refs.rank.style.bottom = bottom;
-      this.$refs.ranklist.refresh();
     },
     selectItem(item) {
       this.$router.push({
@@ -52,27 +50,23 @@ export default {
       });
       this.setRankList(item);
     },
-    _getRankList() {
-      getRankList().then((res) => {
-        if (res.code === ERR_OK) {
-          this.rankList = res.data.topList;
-        }
-      });
+    async getRankList() {
+      const res = await getRankListRequest();
+      if (res.code === ERR_OK) {
+        this.rankList = res.list;
+        const globalStartIndex = filterIndex(this.rankList);
+        this.officialList = this.rankList.slice(0, globalStartIndex);
+        this.globalList = this.rankList.slice(globalStartIndex);
+      }
     },
     ...mapMutations({
       setRankList: 'SET_RANK_LIST',
     }),
   },
-  watch: {
-    rankList() {
-      setTimeout(() => {
-        this.$Lazyload.lazyLoadHandler();
-      }, 20);
-    },
-  },
   components: {
     Scroll,
     Loading,
+    List,
   },
 };
 </script>
@@ -86,37 +80,10 @@ export default {
   width: 100%
   top: 88px
   bottom: 0
-  .ranklist
-    height: 100%
-    overflow: hidden
-    .item
-      display: flex
-      margin: 0 20px
-      padding-top: 20px
-      height: 100px
-      &:last-child
-        padding-bottom: 20px
-      .icon
-        flex: 0 0 100px
-        width: 100px
-        height: 100px
-      .songlist
-        flex: 1
-        display: flex
-        flex-direction: column
-        justify-content: center
-        padding: 0 20px
-        height: 100px
-        overflow: hidden
-        background: $color-highlight-background
-        color: $color-text-d
-        font-size: $font-size-small
-        .song
-          no-wrap()
-          line-height: 26px
-    .loading-container
-      position: absolute
-      width: 100%
-      top: 50%
-      transform: translateY(-50%)
+  overflow hidden
+  .loading-container
+    position: absolute
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)
 </style>
